@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Valentine Surprise ❤️</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  height:100vh;
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(135deg,#ff0844,#ff416c);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+
+/* CARD */
+.container{
+  background:white;
+  padding:35px;
+  border-radius:30px;
+  text-align:center;
+  box-shadow:0 30px 70px rgba(0,0,0,.4);
+  width:92%;
+  max-width:460px;
+  animation:pop 1s ease;
+}
+@keyframes pop{
+  0%{transform:scale(.6);opacity:0}
+  100%{transform:scale(1);opacity:1}
+}
+
+/* TEXT */
+h1{
+  color:#ff1744;
+  font-size:40px;
+  line-height:1.25;
+}
+img{
+  width:100%;
+  border-radius:22px;
+  margin:22px 0;
+  animation:zoom 6s ease-in-out infinite alternate;
+}
+@keyframes zoom{
+  from{transform:scale(1)}
+  to{transform:scale(1.07)}
+}
+
+.buttons{
+  position:relative;
+  height:110px;
+}
+button{
+  padding:18px 42px;
+  font-size:26px;
+  border:none;
+  border-radius:50px;
+  cursor:pointer;
+}
+#yes{
+  background:#ff1744;
+  color:white;
+}
+#no{
+  background:#ccc;
+  position:absolute;
+  left:240px;
+}
+
+/* EFFECTS */
+canvas{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+.heart,.petal{
+  position:absolute;
+  animation:fall linear infinite;
+}
+.heart{font-size:34px}
+.petal{font-size:26px;opacity:.8}
+
+@keyframes fall{
+  from{transform:translateY(-10vh)}
+  to{transform:translateY(110vh)}
+}
+.fade-in{
+  animation:fade 2s ease forwards;
+}
+@keyframes fade{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+</style>
+</head>
+<body>
+
+<audio id="heartbeat" src="heartbeat.mp3" loop></audio>
+<audio id="music" src="music.mp3"></audio>
+<canvas id="confetti"></canvas>
+
+<div class="container" id="card">
+  <h1>Will you be my Valentine,<br>Muss? ❣️😍</h1>
+  <img src="photo.jpg">
+  <div class="buttons">
+    <button id="yes">Yes 💕</button>
+    <button id="no">No 💔</button>
+  </div>
+</div>
+
+<script>
+const noBtn=document.getElementById("no");
+const yesBtn=document.getElementById("yes");
+const heartbeat=document.getElementById("heartbeat");
+const music=document.getElementById("music");
+
+document.addEventListener("click",()=>{
+  heartbeat.volume=0.6;
+  heartbeat.play();
+},{once:true});
+
+function moveNo(){
+  noBtn.style.left=Math.random()*(window.innerWidth-150)+"px";
+  noBtn.style.top=Math.random()*(window.innerHeight-150)+"px";
+}
+noBtn.onmouseover=moveNo;
+noBtn.onclick=moveNo;
+
+yesBtn.onclick=()=>{
+  heartbeat.pause();
+  music.play();
+  document.body.innerHTML=`
+    <canvas id="confetti"></canvas>
+    <div style="
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      flex-direction:column;
+      text-align:center;
+      color:#fff;
+      font-family:Segoe UI;
+      padding:40px;
+      background:linear-gradient(135deg,#ff0844,#ff416c);">
+      
+      <h1 class="fade-in" style="
+        font-size:64px;
+        margin-bottom:35px;
+        color:#fff700;
+        text-shadow:0 0 20px rgba(0,0,0,.6);">
+        🎉 Woww she accepted 😘🫶🏻 🎉
+      </h1>
+
+      <p class="fade-in" style="
+        max-width:600px;
+        font-size:30px;
+        line-height:1.8;">
+        Tumhari muskan se hi mera din shuru hota hai,🌹<br>
+        Sach kahun janu, tumse baat karke hi mera dil khush hota hai… ❤️‍🔥
+      </p>
+    </div>`;
+
+  confetti();
+  hearts();
+  petals();
+};
+
+function confetti(){
+  const c=document.getElementById("confetti"),ctx=c.getContext("2d");
+  c.width=innerWidth;c.height=innerHeight;
+  let p=[];
+  for(let i=0;i<320;i++)
+    p.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*9+4,d:Math.random()*4+2});
+  (function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    ctx.fillStyle="pink";
+    p.forEach(o=>{
+      ctx.beginPath();
+      ctx.arc(o.x,o.y,o.r,0,Math.PI*2);
+      ctx.fill();
+      o.y+=o.d;
+      if(o.y>c.height)o.y=0;
+    });
+    requestAnimationFrame(draw);
+  })();
+}
+
+function hearts(){
+  for(let i=0;i<40;i++){
+    let h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="❤️";
+    h.style.left=Math.random()*100+"vw";
+    h.style.animationDuration=3+Math.random()*4+"s";
+    document.body.appendChild(h);
+  }
+}
+
+function petals(){
+  for(let i=0;i<35;i++){
+    let p=document.createElement("div");
+    p.className="petal";
+    p.innerHTML="🌹";
+    p.style.left=Math.random()*100+"vw";
+    p.style.animationDuration=4+Math.random()*5+"s";
+    document.body.appendChild(p);
+  }
+}
+</script>
+
+</body>
+</html>
